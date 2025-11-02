@@ -1,103 +1,62 @@
-# ===========================
-# Super Brain: push to GitHub
-# ===========================
-
-# --- Settings (edit if needed) ---
-$PROJECT_PATH = "C:\Resumes\NeenOpal\Super Brain"
-$REMOTE       = "https://github.com/kanish818/Super-Brain"
-$BRANCH       = "main"
-
-# --- Go to project folder ---
-Set-Location -LiteralPath "$PROJECT_PATH"
-
-# --- Initialize git repo if missing ---
-if (-not (Test-Path ".git")) {
-  git init
-}
-
-# --- Ensure branch is $BRANCH ---
-git checkout -B $BRANCH
-
-# --- (Re)set remote origin to the target repo ---
-$hasOrigin = git remote | Select-String -Pattern "^origin$" -Quiet
-if ($hasOrigin) { git remote remove origin }
-git remote add origin "$REMOTE"
-
-# --- Create/overwrite README.md with project details ---
-@'
 # Super Brain
 
-Super Brain is a modular, local-first toolkit that lets you query, analyze, and automate reasoning over your own data sources.  
-It focuses on **clear structure**, **reproducible runs**, and **minimal setup** so you can start quickly and scale features over time.
+**Super Brain** is a modular, local-first toolkit for querying, analyzing, and automating reasoning over your own files and data sources. It emphasizes **simple setup**, **clean structure**, and **reproducible runs** so you can start quickly and extend safely.
 
 ---
 
-## Why this project?
+## ✨ Key Features
 
-- **Local-first**: keep control of your files and intermediate artifacts.
-- **Modular**: add or replace components (ingestion, processing, LLM calls, vector storage) without rewriting the whole app.
-- **Reproducible**: single command to set up, run, and test common workflows.
-- **Extensible**: clean interfaces for plugging in new tools, models, or data connectors.
-
----
-
-## Features (high-level)
-
-- Ingestion layer for structured (CSV/JSON/SQL) and unstructured (txt/markdown) data
-- Config-driven pipelines (one file to switch sources, parameters, or modes)
-- Optional vector indexing for semantic lookup
-- Simple CLI and scriptable entry points for batch jobs
-- Clear logs and deterministic seeds where applicable
-
-> Note: This README describes how to **use** and **extend** the project without including any personal or machine-specific details.
+- **Local-first**: Run entirely on your machine; keep full control of data and artifacts.
+- **Modular pipelines**: Swap ingestion, processing, indexing, and query components without rewrites.
+- **Config-driven**: Choose sources, parameters, and modes via a single config file.
+- **Semantic retrieval (optional)**: Build lightweight indexes for fast, relevant lookups.
+- **Scriptable CLI**: Automate end-to-end tasks and batch jobs.
+- **Reproducible**: Deterministic settings, logs, and saved outputs.
 
 ---
 
-## Folder structure (typical)
+## 📁 Suggested Project Structure
+
+> Actual layout may differ. Use this as a quick map.
 
 super-brain/
 ├─ src/
-│ ├─ core/ # core abstractions & shared utilities
-│ ├─ ingestion/ # readers/connectors (CSV, JSON, SQL, files)
-│ ├─ processing/ # transforms, clean-up, chunking, embeddings, etc.
+│ ├─ core/ # shared utils & abstractions
+│ ├─ ingestion/ # CSV/JSON/filesystem/SQL readers
+│ ├─ processing/ # cleaning, chunking, embeddings
 │ ├─ retrieval/ # indexing & query strategies
-│ ├─ cli/ # CLI entry points (e.g., superbrain run ...)
-│ └─ app/ # optional web/desktop hooks (if any)
-├─ configs/ # *.yaml / *.json configs for runs
-├─ data/ # your local data (gitignored by default)
-├─ outputs/ # run artifacts: logs, caches, results
+│ ├─ cli/ # CLI entry points
+│ └─ app/ # optional web/UI hooks
+├─ configs/ # YAML/JSON config files
+├─ data/ # local data (typically gitignored)
+├─ outputs/ # logs, indexes, run artifacts
 ├─ tests/ # unit/integration tests
-├─ requirements.txt # Python deps (if Python project)
-├─ package.json # Node deps (if Node project)
+├─ requirements.txt # Python deps (if Python stack)
+├─ package.json # Node deps (if Node stack)
 ├─ .env.example # sample environment variables
-└─ README.md # this file
+└─ README.md
 
-markdown
-Copy code
-
-> The actual structure may vary; use this as a guide to navigate the codebase.
 
 ---
 
-## Prerequisites
+## 🧰 Prerequisites
 
-Choose what applies to your setup:
+Install what matches your stack:
 
-- **Python** ≥ 3.10 (if using the Python toolchain)  
-  - `pip` (or `uv`/`pipx`)  
-- **Node.js** ≥ 18 (if using the Node toolchain)  
+- **Git**
+- **Python ≥ 3.10** (if using Python toolchain)
+  - `pip` (or `uv`/`pipx`)
+- **Node.js ≥ 18** (if using Node toolchain)
   - `npm` or `pnpm` or `yarn`
-- **Git** for version control
 
-If a `.env` file is required for optional integrations, copy the example and fill values you need:
+If optional integrations need secrets/keys, copy the example env file:
 
 ```bash
 cp .env.example .env
-# then edit .env with your keys/paths (optional features only)
-Quick start
+# then edit .env with required values for optional features
+
+🚀 Quick Start
 Option A — Python workflow
-bash
-Copy code
 # 1) Create and activate a virtual environment
 python -m venv .venv
 # Windows PowerShell:
@@ -108,92 +67,117 @@ python -m venv .venv
 # 2) Install dependencies
 pip install -r requirements.txt
 
-# 3) Run a sample pipeline (config selects data & steps)
+# 3) Run a sample pipeline
 python -m src.cli.run --config configs/quickstart.yaml
+
 Option B — Node workflow
-bash
-Copy code
 # 1) Install dependencies
 npm install
 # or: pnpm install / yarn
 
 # 2) Run a sample task
 npm run start -- --config configs/quickstart.json
-Use whichever stack the repository contains. If both exist, you can mix units (e.g., Python for ingestion + Node UI), but start with one path.
 
-Using the CLI
-Common patterns (names may differ depending on your build):
 
-bash
-Copy code
+Use whichever stack this repository actually contains. If both exist, start with one path and extend gradually.
+
+🧪 Common CLI Usage
 # Ingest and index a folder of Markdown files
 superbrain ingest --source ./data/notes --type markdown --index local
 
 # Ask a question over indexed data
 superbrain query --ask "What are the key topics?" --topk 5
 
-# Run an end-to-end pipeline defined by a config
+# Run an end-to-end pipeline from a config
 superbrain run --config ./configs/quickstart.yaml
-If superbrain is not available as a global command, use the module/script directly, e.g.:
 
-bash
-Copy code
+
+If superbrain isn’t installed as a global command, call the module/script directly:
+
 python -m src.cli.run --config ./configs/quickstart.yaml
 # or
 node ./src/cli/run.js --config ./configs/quickstart.json
-Configuration
-Keep editable knobs in ./configs/*:
 
-paths: where to read input and write outputs
+⚙️ Configuration
 
-pipeline: which stages are active (ingest → process → index → query)
+Keep runtime options in configs/*:
 
-params: chunk sizes, embedding model, retrieval strategy, etc.
+paths: input/output directories
 
-Switching sources or models = change one config file instead of code.
+pipeline: enable/disable stages (ingest → process → index → query)
 
-Development
-Use small, realistic sample files in data/ to iterate quickly
+params: chunk sizes, embedding model, retrieval strategy, top-k, etc.
 
-Prefer pure functions and typed signatures for testability
+Example (YAML):
 
-Add unit tests in tests/ for each new module or bug fix
+paths:
+  input: "./data"
+  outputs: "./outputs"
 
-Log important decisions and parameters to outputs/ for reproducibility
+pipeline:
+  ingest: true
+  process: true
+  index: true
+  query: false
 
-Example (Python):
+params:
+  chunk_size: 800
+  overlap: 100
+  embedding_model: "local-mini"
+  retrieval: "bm25"
+  topk: 5
 
-bash
-Copy code
-pytest -q
-Example (Node):
+🧱 Examples
 
-bash
-Copy code
-npm test
-Troubleshooting
-No module/command found: activate your venv (Python) or reinstall deps (Node).
+Index local notes
 
-Access/key errors: check .env variables or disable that optional integration.
+superbrain ingest --source ./data/notes --type markdown --index local
 
-Slow queries: reduce topk, simplify embeddings, or prune large sources.
 
-Large data: run in batches and verify indexes are stored on disk (not in RAM only).
+Query for an answer
 
-Roadmap (suggested)
+superbrain query --ask "Summarize meeting actions from last week" --topk 3
+
+
+Batch run via config
+
+superbrain run --config ./configs/batch.yaml
+
+🧰 Development Tips
+
+Keep small sample files in data/ for fast iteration.
+
+Prefer pure, testable functions and typed signatures.
+
+Add tests for every module/bugfix:
+
+pytest -q       # Python
+# or
+npm test        # Node
+
+
+Log parameters and decisions to outputs/ for reproducibility.
+
+🐛 Troubleshooting
+
+Command not found → Activate your Python venv or reinstall Node deps.
+
+Missing env values → Copy .env.example to .env and fill only the needed keys.
+
+Slow queries → Reduce topk, simplify embeddings, or prune large files.
+
+High memory → Process in batches; ensure indexes are on disk rather than RAM.
+
+🗺️ Roadmap (suggested)
+
 Pluggable UI for interactive exploration
 
-More connectors (GDrive, Notion, DBs) via adapters
+Additional connectors (cloud docs/DBs) via adapter pattern
 
-Multi-vector retrieval and reranking
+Reranking and multi-vector retrieval
 
-Caching & offline modes for repeat questions
+On-disk caches for repeat questions and offline mode
 
-License
-Choose a license and add it here (e.g., MIT, Apache-2.0). If absent, default is “all rights reserved”.
-'@ | Set-Content -LiteralPath "README.md" -Encoding UTF8
+🔏 License
 
---- Stage, commit, and push ---
-git add -A
-git commit -m "Initial project import: Super Brain + README"
-git push -u origin "$BRANCH"
+Add your license (e.g., MIT/Apache-2.0) in LICENSE. If none is provided, all rights are reserved by default.
