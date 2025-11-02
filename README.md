@@ -55,10 +55,12 @@ If optional integrations need secrets/keys, copy the example env file:
 cp .env.example .env
 # then edit .env with required values for optional features
 
+
 🚀 Quick Start
 Option A — Python workflow
 # 1) Create and activate a virtual environment
 python -m venv .venv
+
 # Windows PowerShell:
 . .\.venv\Scripts\Activate.ps1
 # macOS/Linux:
@@ -78,10 +80,7 @@ npm install
 # 2) Run a sample task
 npm run start -- --config configs/quickstart.json
 
-
-Use whichever stack this repository actually contains. If both exist, start with one path and extend gradually.
-
-🧪 Common CLI Usage
+Common CLI Usage
 # Ingest and index a folder of Markdown files
 superbrain ingest --source ./data/notes --type markdown --index local
 
@@ -91,25 +90,19 @@ superbrain query --ask "What are the key topics?" --topk 5
 # Run an end-to-end pipeline from a config
 superbrain run --config ./configs/quickstart.yaml
 
-
 If superbrain isn’t installed as a global command, call the module/script directly:
-
 python -m src.cli.run --config ./configs/quickstart.yaml
 # or
 node ./src/cli/run.js --config ./configs/quickstart.json
 
+
 ⚙️ Configuration
 
 Keep runtime options in configs/*:
-
 paths: input/output directories
-
 pipeline: enable/disable stages (ingest → process → index → query)
-
 params: chunk sizes, embedding model, retrieval strategy, top-k, etc.
-
-Example (YAML):
-
+Example (configs/quickstart.yaml):
 paths:
   input: "./data"
   outputs: "./outputs"
@@ -127,30 +120,31 @@ params:
   retrieval: "bm25"
   topk: 5
 
-🧱 Examples
+Project Structure
+super-brain/
+  ├─ src/
+  │  ├─ core/            # shared utils & abstractions
+  │  ├─ ingestion/       # CSV/JSON/filesystem/SQL readers
+  │  ├─ processing/      # cleaning, chunking, embeddings
+  │  ├─ retrieval/       # indexing & query strategies
+  │  ├─ cli/             # CLI entry points
+  │  └─ app/             # optional web/UI hooks
+  ├─ configs/            # YAML/JSON config files
+  ├─ data/               # local data (gitignored)
+  ├─ outputs/            # logs, indexes, run artifacts
+  ├─ tests/              # unit/integration tests
+  ├─ requirements.txt    # Python deps (if Python stack)
+  ├─ package.json        # Node deps (if Node stack)
+  ├─ .env.example        # sample environment variables
+  └─ README.md
 
-Index local notes
-
-superbrain ingest --source ./data/notes --type markdown --index local
-
-
-Query for an answer
-
-superbrain query --ask "Summarize meeting actions from last week" --topk 3
-
-
-Batch run via config
-
-superbrain run --config ./configs/batch.yaml
-
-🧰 Development Tips
+Development Tips
 
 Keep small sample files in data/ for fast iteration.
 
 Prefer pure, testable functions and typed signatures.
 
-Add tests for every module/bugfix:
-
+Add tests for every module/bug fix:
 pytest -q       # Python
 # or
 npm test        # Node
@@ -160,24 +154,16 @@ Log parameters and decisions to outputs/ for reproducibility.
 
 🐛 Troubleshooting
 
-Command not found → Activate your Python venv or reinstall Node deps.
+Command not found → Activate the Python venv or reinstall Node deps.
 
-Missing env values → Copy .env.example to .env and fill only the needed keys.
+Missing env values → Copy .env.example → .env and fill only what you need.
 
 Slow queries → Reduce topk, simplify embeddings, or prune large files.
 
-High memory → Process in batches; ensure indexes are on disk rather than RAM.
-
-🗺️ Roadmap (suggested)
-
-Pluggable UI for interactive exploration
-
-Additional connectors (cloud docs/DBs) via adapter pattern
-
-Reranking and multi-vector retrieval
-
-On-disk caches for repeat questions and offline mode
+High memory → Process in batches; ensure indexes are on disk (not RAM-only).
 
 🔏 License
 
 Add your license (e.g., MIT/Apache-2.0) in LICENSE. If none is provided, all rights are reserved by default.
+
+
