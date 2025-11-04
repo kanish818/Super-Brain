@@ -28,30 +28,45 @@ model_candidates = [
 if tf is None:
     print("TensorFlow not available; model will not be loaded.")
 else:
-    for p in model_candidates:
-        try:
-            if os.path.exists(p):
-                model = tf.keras.models.load_model(p)
-                print(f"Model loaded successfully from: {p}")
-                break
-        except Exception as e:
-            print(f"Failed loading model at {p}: {e}")
-    if model is None:
-        print("No usable model found in candidate paths.")
+    try:
+        for p in model_candidates:
+            try:
+                if os.path.exists(p):
+                    model = tf.keras.models.load_model(p)
+                    print(f"Model loaded successfully from: {p}")
+                    break
+            except Exception as e:
+                print(f"Failed loading model at {p}: {e}")
+        if model is None:
+            print("No usable model found in candidate paths.")
+    except Exception as e:
+        print(f"Error during model loading: {e}")
 
 # Load and prepare data for preprocessing
 data_path = 'Final_clean.csv'
-if os.path.exists(data_path):
-    df = pd.read_csv(data_path)
-    scaler = StandardScaler()
-    scaler.fit(df[['Value']])
-    label_encoder = LabelEncoder()
-    label_encoder.fit(df['Result'])
-    print("Data loaded and scaler fitted.")
-else:
+try:
+    if os.path.exists(data_path):
+        df = pd.read_csv(data_path)
+        if StandardScaler and LabelEncoder:
+            scaler = StandardScaler()
+            label_encoder = LabelEncoder()
+            if 'Value' in df.columns:
+                scaler.fit(df[['Value']])
+            if 'Result' in df.columns:
+                label_encoder.fit(df['Result'])
+            print("Data loaded and scaler fitted.")
+        else:
+            scaler = None
+            label_encoder = None
+            print("StandardScaler or LabelEncoder not available.")
+    else:
+        scaler = None
+        label_encoder = None
+        print(f"Data file not found at: {data_path}")
+except Exception as e:
     scaler = None
     label_encoder = None
-    print("Data file not found.")
+    print(f"Error loading data: {e}")
 
 # HTML template for the web app
 HTML_TEMPLATE = """
