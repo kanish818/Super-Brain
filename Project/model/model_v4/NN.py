@@ -52,7 +52,7 @@ def create_sequences(X, y, sequence_length=10):
     return np.array(X_seq), np.array(y_seq)
 
 # Load and preprocess data
-X, y = load_data('Latest/Project/Final.csv')
+X, y = load_data('../../../Final_clean.csv')
 X, y, label_encoder = preprocess_data(X, y)
 
 # Create sequences
