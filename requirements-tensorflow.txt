@@ -1,0 +1,9 @@
+# Optional: TensorFlow (large, platform-specific). Install only if you need model
+# inference or training. Choose the appropriate package for your system.
+# For most CPU-only Windows environments, the following will install a compatible
+# TensorFlow version:
+tensorflow>=2.13.0
+
+# For GPU systems, follow the official TensorFlow installation guide to match
+# the correct CUDA and cuDNN versions, or install a GPU-enabled wheel if
+# available for your platform.
